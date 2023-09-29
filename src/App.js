@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <div>CIDR Block Party till you drop Calculator</div>
+        <div>CIDR Block Party again Calculator</div>
       </header>
       <IPv4Addr />
       <footer>
