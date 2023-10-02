@@ -56,6 +56,15 @@ jobs:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
         image: ${{ steps.build-image.outputs.image }}
+    
+    #- name: Run Task on Amazon ECS
+    #  uses: smitp/amazon-ecs-run-task@v1
+    #  with:
+    #    task-definition: task-definition.json
+    #    cluster: my-cluster
+    #    count: 1
+    #    started-by: github-actions-${{ github.actor }}
+    #    wait-for-finish: true
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
