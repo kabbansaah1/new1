@@ -8,8 +8,8 @@ on:
 env:
   AWS_REGION: us-east-2                 
   ECR_REPOSITORY: my-first-ecr-repo          
-  ECS_SERVICE: my-first-service                
-  ECS_CLUSTER: my-cluster                 
+  ECS_SERVICE: dev-ecs-service               
+  ECS_CLUSTER: dev-cluster                 
   ECS_TASK_DEFINITION: .github/workflows/task-definition.json
   CONTAINER_NAME: my-first-task           
 
