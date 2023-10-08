@@ -69,12 +69,12 @@ jobs:
 
   stage-env-deployment:
     name: deploy to stage environment
+    needs: [build-and-release]
     runs-on: ubuntu-latest
     environment: stage
 
     steps:
     - name: Deploy Amazon ECS task definition
-      needs: [build-and-release]
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
