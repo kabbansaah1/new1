@@ -18,7 +18,7 @@ permissions:
   contents: read 
   
 jobs:
-  deploy:
+  build-and-release:
     name: Build, release deploy
     runs-on: ubuntu-latest
     environment: production
