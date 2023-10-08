@@ -19,7 +19,7 @@ permissions:
   
 jobs:
   deploy:
-    name: Deploy
+    name: Build, release deploy
     runs-on: ubuntu-latest
     environment: production
 
