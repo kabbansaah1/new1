@@ -19,7 +19,7 @@
         }
     ],
     "family": "my-first-task",
-    "executionRoleArn": "arn:aws:iam::893688252992:role/ecsTaskExecutionRole",
+    "executionRoleArn": "arn:aws:iam::893688252992:role/ecsTaskExecutionRole-dev",
     "networkMode": "awsvpc",
     "volumes": [],
     "placementConstraints": [],
