@@ -27,6 +27,9 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
+    outputs:
+      output1: ${{ steps.task-def.outputs.task-definition }}
+
     steps:
     - name: Checkout
       uses: actions/checkout@v3
