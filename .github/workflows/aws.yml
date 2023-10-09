@@ -79,6 +79,8 @@ jobs:
         service: ${{ env.STAGE_ECS_SERVICE }}
         cluster: ${{ env.STAGE_ECS_CLUSTER }}
         wait-for-service-stability: true
+        echo "task-definition=steps.task-def.outputs.task-definition" >> $GITHUB_OUTPUT
+
   deploy-to-prod:
     name: prod deployment
     runs-on: ubuntu-latest
@@ -88,7 +90,7 @@ jobs:
     - name: Deploy to Prod
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ needs.build-and-release.outputs.output1 }}
+        task-definition: ${{ env.ECS_TASK_DEFINITION }}
         service: ${{ env.PROD_ECS_SERVICE }}
         cluster: ${{ env.PROD_ECS_CLUSTER }}
         wait-for-service-stability: true
