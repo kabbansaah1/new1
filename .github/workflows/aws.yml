@@ -72,7 +72,7 @@ jobs:
     - name: Deploy to Stage
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ env.STAGE_ECS_SERVICE }}
         cluster: ${{ env.STAGE_ECS_CLUSTER }}
         wait-for-service-stability: true
@@ -80,7 +80,7 @@ jobs:
     - name: Deploy to Prod
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ env.PROD_ECS_SERVICE }}
         cluster: ${{ env.PROD_ECS_CLUSTER }}
         wait-for-service-stability: true
