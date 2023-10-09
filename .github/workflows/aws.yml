@@ -88,7 +88,7 @@ jobs:
     - name: Deploy to Prod
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ needs.build-and-release.output1 }}
+        task-definition: ${{ needs.build-and-release.outputs.output1 }}
         service: ${{ env.PROD_ECS_SERVICE }}
         cluster: ${{ env.PROD_ECS_CLUSTER }}
         wait-for-service-stability: true
