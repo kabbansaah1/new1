@@ -79,11 +79,15 @@ jobs:
         service: ${{ env.STAGE_ECS_SERVICE }}
         cluster: ${{ env.STAGE_ECS_CLUSTER }}
         wait-for-service-stability: true
+  build-and-release:
+    name: prod deployment
+    needs: build-and-release
+    steps:
 
     - name: Deploy to Prod
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
-        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        task-definition: ${{ needs.build-and-release.output1 }}
         service: ${{ env.PROD_ECS_SERVICE }}
         cluster: ${{ env.PROD_ECS_CLUSTER }}
         wait-for-service-stability: true
