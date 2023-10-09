@@ -8,10 +8,12 @@ on:
 env:
   AWS_REGION: us-east-2                 
   ECR_REPOSITORY: my-first-ecr-repo          
-  ECS_SERVICE: dev-ecs-service               
-  ECS_CLUSTER: dev-cluster
+  DEV_ECS_SERVICE: dev-ecs-service               
+  DEV_ECS_CLUSTER: dev-cluster
   STAGE_ECS_SERVICE: stage-ecs-service               
-  STAGE_ECS_CLUSTER: stage-cluster                  
+  STAGE_ECS_CLUSTER: stage-cluster
+  PROD_ECS_SERVICE: prod-ecs-service               
+  PROD_ECS_CLUSTER: prod-cluster                  
   ECS_TASK_DEFINITION: .github/workflows/task-definition.json
   CONTAINER_NAME: my-first-task           
 
@@ -63,8 +65,8 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: ${{ env.ECS_SERVICE }}
-        cluster: ${{ env.ECS_CLUSTER }}
+        service: ${{ env.DEV_ECS_SERVICE }}
+        cluster: ${{ env.DEV_ECS_CLUSTER }}
         wait-for-service-stability: true
 
     - name: Deploy to Stage
@@ -73,4 +75,12 @@ jobs:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
         service: ${{ env.STAGE_ECS_SERVICE }}
         cluster: ${{ env.STAGE_ECS_CLUSTER }}
+        wait-for-service-stability: true
+
+    - name: Deploy to Prod
+      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        service: ${{ env.PROD_ECS_SERVICE }}
+        cluster: ${{ env.PROD_ECS_CLUSTER }}
         wait-for-service-stability: true
