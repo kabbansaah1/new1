@@ -29,7 +29,7 @@ jobs:
 
     outputs:
       image: ${{ steps.build-image.outputs.image }}
-
+      
     steps:
     - name: Checkout
       uses: actions/checkout@v3
@@ -62,7 +62,7 @@ jobs:
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
-        image: ${{ steps.build-image.outputs.image }}    
+        image: ${{ steps.build-image.outputs.image }}
     
     - name: Deploy to dev
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -72,6 +72,21 @@ jobs:
         cluster: ${{ env.DEV_ECS_CLUSTER }}
         wait-for-service-stability: true
 
+  deploy-to-stage:
+    name: staging
+    runs-on: ubuntu-latest
+    environment: production
+    needs: build-and-release
+
+    steps:
+    - name: Fill in the new image ID in the Amazon ECS task definition
+      id: task-def
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ env.ECS_TASK_DEFINITION }}
+        container-name: ${{ env.CONTAINER_NAME }}
+        image: ${{ needs.build-and-release.outputs.image }}
+        
     - name: Deploy to Stage
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
@@ -79,17 +94,5 @@ jobs:
         service: ${{ env.STAGE_ECS_SERVICE }}
         cluster: ${{ env.STAGE_ECS_CLUSTER }}
         wait-for-service-stability: true
-
-  test-echo:
-    name: testing only
-    runs-on: ubuntu-latest
-    environment: production
-    needs: build-and-release
-   
-    steps:
-    - name: testing now
-      run: |
-        echo ${{ needs.build-and-release.outputs.image }}
-
 
   
