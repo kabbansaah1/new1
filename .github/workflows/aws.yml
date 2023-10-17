@@ -80,4 +80,15 @@ jobs:
         cluster: ${{ env.STAGE_ECS_CLUSTER }}
         wait-for-service-stability: true
 
+  test-echo:
+    name: testing only
+    runs-on: ubuntu-latest
+    environment: production
+   
+    steps:
+    - name: testing now
+      run: |
+        echo ${{ needs.build-and-release.outputs.image }}
+
+
   
