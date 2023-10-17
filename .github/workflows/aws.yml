@@ -86,6 +86,7 @@ jobs:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
         container-name: ${{ env.CONTAINER_NAME }}
         image: 893688252992.dkr.ecr.us-east-2.amazonaws.com/my-first-ecr-repo
+        environment-variables: "LOG_LEVEL=info"
         
     - name: Deploy to Stage
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
