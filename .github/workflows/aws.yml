@@ -72,12 +72,15 @@ jobs:
     needs: build-and-release
 
     steps:
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v1
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
       with:
-        mask-password: "true"
-                
+        role-to-assume: arn:aws:iam::893688252992:role/Github
+        role-session-name: Github
+        aws-region: ${{ env.AWS_REGION }}
+    
     - name: Deploy to Stage
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
