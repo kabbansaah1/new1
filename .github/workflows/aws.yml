@@ -54,6 +54,21 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG_LATEST
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+  deploy-to-dev:
+    name: dev-env
+    runs-on: ubuntu-latest
+    needs: build-and-release
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        role-to-assume: arn:aws:iam::893688252992:role/Github
+        role-session-name: Github
+        aws-region: ${{ env.AWS_REGION }}
     - name: Deploy to dev
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
@@ -63,7 +78,7 @@ jobs:
         wait-for-service-stability: true
 
   deploy-to-stage:
-    name: staging
+    name: staging-env
     runs-on: ubuntu-latest
     environment: production
     needs: build-and-release
