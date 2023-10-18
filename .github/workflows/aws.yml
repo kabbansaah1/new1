@@ -25,7 +25,6 @@ jobs:
   build-and-release:
     name: Build, release deploy
     runs-on: ubuntu-latest
-    environment: production
         
     steps:
     - name: Checkout
@@ -69,6 +68,7 @@ jobs:
         role-to-assume: arn:aws:iam::893688252992:role/Github
         role-session-name: Github
         aws-region: ${{ env.AWS_REGION }}
+        
     - name: Deploy to dev
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
@@ -80,8 +80,7 @@ jobs:
   deploy-to-stage:
     name: staging-env
     runs-on: ubuntu-latest
-    environment: production
-    needs: build-and-release
+    needs: deploy-to-dev
 
     steps:
     - name: Checkout
