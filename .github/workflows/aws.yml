@@ -7,19 +7,13 @@ on:
 
 env:
   AWS_REGION: us-east-2                 
-  ECR_REPOSITORY: my-first-ecr-repo          
-  DEV_ECS_SERVICE: dev-ecs-service               
-  DEV_ECS_CLUSTER: dev-cluster
-  STAGE_ECS_SERVICE: stage-ecs-service               
-  STAGE_ECS_CLUSTER: stage-cluster
-  PROD_ECS_SERVICE: prod-ecs-service               
-  PROD_ECS_CLUSTER: prod-cluster                  
+  ECR_REPOSITORY: my-first-ecr-repo
   ECS_TASK_DEFINITION: .github/workflows/task-definition.json
-  CONTAINER_NAME: my-first-task           
+  CONTAINER_NAME: my-first-task
 
 permissions:
   id-token: write
-  contents: read 
+  contents: read
   
 jobs:
   build-and-release:
@@ -54,71 +48,34 @@ jobs:
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-  deploy-to-dev:
-    name: dev-env
+  deploy:
+    name: Deploy to ${{ matrix.environment }} Environment
     runs-on: ubuntu-latest
-    needs: build-and-release
+    strategy:
+      matrix:
+        environment: [dev, stage, prod]
 
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         role-to-assume: arn:aws:iam::893688252992:role/Github
         role-session-name: Github
         aws-region: ${{ env.AWS_REGION }}
-        
-    - name: Deploy to dev
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+      with:
+        mask-password: "true"
+
+    - name: Deploy to ${{ matrix.environment }}
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        service: ${{ env.DEV_ECS_SERVICE }}
-        cluster: ${{ env.DEV_ECS_CLUSTER }}
-        wait-for-service-stability: true
-
-  deploy-to-stage:
-    name: staging-env
-    runs-on: ubuntu-latest
-    needs: deploy-to-dev
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        role-to-assume: arn:aws:iam::893688252992:role/Github
-        role-session-name: Github
-        aws-region: ${{ env.AWS_REGION }}
-    
-    - name: Deploy to Stage
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        service: ${{ env.STAGE_ECS_SERVICE }}
-        cluster: ${{ env.STAGE_ECS_CLUSTER }}
-        wait-for-service-stability: true
-
-  deploy-to-prod:
-    name: prod-env
-    runs-on: ubuntu-latest
-    needs: deploy-to-stage
-
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v3
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v2
-      with:
-        role-to-assume: arn:aws:iam::893688252992:role/Github
-        role-session-name: Github
-        aws-region: ${{ env.AWS_REGION }}
-    
-    - name: Deploy to Prod
-      uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      with:
-        task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        service: ${{ env.PROD_ECS_SERVICE }}
-        cluster: ${{ env.PROD_ECS_CLUSTER }}
+        service: ${{ matrix.environment }}-ecs-service
+        cluster: ${{ matrix.environment }}-cluster
         wait-for-service-stability: true
